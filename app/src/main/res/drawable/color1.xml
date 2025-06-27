@@ -1,0 +1,4 @@
+<!-- res/drawable/cell_inner_border.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke android:width="0.5dp" android:color="#666666"/>
+</shape>

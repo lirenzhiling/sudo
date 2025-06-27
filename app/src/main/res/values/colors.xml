@@ -1,0 +1,10 @@
+<!-- res/values/colors.xml -->
+<resources>
+    <color name="primary">#3F51B5</color>
+    <color name="hint_blue">#8FC3F0</color>
+    <color name="filled">#333333</color>
+    <color name="marked">#BBDEFB</color>
+    <color name="empty">#FAFAFA</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+</resources>
