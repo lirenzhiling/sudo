@@ -5,6 +5,8 @@
     <color name="filled">#333333</color>
     <color name="marked">#BBDEFB</color>
     <color name="empty">#FAFAFA</color>
+    <color name="orange">#FBBAA6</color>
+    <color name="test">#75E478</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
 </resources>
