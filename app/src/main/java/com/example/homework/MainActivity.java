@@ -2,15 +2,20 @@ package com.example.homework;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.Chronometer;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
     int mygrouprow;
     int mygroupcol;
     private int buttoni=1;
+    private boolean isPlaying = false;
+
+    private long pausedTime = 0; // 记录暂停时的累计时间
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,8 +46,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         GridLayout gridLayout = findViewById(R.id.sudoku_grid);
         GridLayout buttons=findViewById(R.id.button_grid);
+        ImageView btnControl = findViewById(R.id.btn_control);
+        Chronometer chronometer = findViewById(R.id.chronometer);
         gridLayout.setColumnCount(9);
         gridLayout.setRowCount(9);
+        chronometer.start();
 
         // 动态生成81个格子
         for (int row = 0; row < 9; row++) {
@@ -111,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //让按钮能够响应
-        for (buttoni=0;buttoni<=9;buttoni++){
+        for (buttoni=0;buttoni<9;buttoni++){
             buttons.getChildAt(buttoni).setTag(Integer.toString(buttoni+1));
             buttons.getChildAt(buttoni).setOnClickListener(new View.OnClickListener(){
                 @Override
@@ -126,5 +138,69 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        //工具栏按钮
+        btnControl.setOnClickListener(v -> {
+            isPlaying = false;
+            // 切换图片（直接修改src或使用状态列表）
+            btnControl.setImageResource(R.drawable.stop);
+            // 暂停计时
+            if (!isPlaying) {
+                pausedTime = SystemClock.elapsedRealtime() - chronometer.getBase();
+                chronometer.stop();
+            }
+
+            // 显示对话框
+            new AlertDialog.Builder(this)
+                    .setTitle("暂停游戏中")
+                    .setMessage("要继续游戏吗？")
+                    .setNegativeButton("确定", (dialog, which) -> {
+                        btnControl.setImageResource(R.drawable.play);
+                        isPlaying = true;
+                        // 继续计时
+                        if (isPlaying) {
+                            chronometer.setBase(SystemClock.elapsedRealtime() - pausedTime);
+                            chronometer.start();
+                        }
+                    })
+                    .setPositiveButton("退出", null)
+                    .show();
+        });
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (!isChangingConfigurations()) {
+            // 应用进入后台，执行暂停逻辑
+            ImageView btnControl = findViewById(R.id.btn_control);
+            Chronometer chronometer = findViewById(R.id.chronometer);
+            isPlaying = false;
+            // 切换图片（直接修改src或使用状态列表）
+            btnControl.setImageResource(R.drawable.stop);
+            // 暂停计时
+            if (!isPlaying) {
+                pausedTime = SystemClock.elapsedRealtime() - chronometer.getBase();
+                chronometer.stop();
+            }
+
+            // 显示对话框
+            new AlertDialog.Builder(this)
+                    .setTitle("暂停游戏中")
+                    .setMessage("要继续游戏吗？")
+                    .setNegativeButton("确定", (dialog, which) -> {
+                        btnControl.setImageResource(R.drawable.play);
+                        isPlaying = true;
+                        // 继续计时
+                        if (isPlaying) {
+                            chronometer.setBase(SystemClock.elapsedRealtime() - pausedTime);
+                            chronometer.start();
+                        }
+                    })
+                    .setPositiveButton("退出", null)
+                    .show();
+        }
     }
 }
+
+
