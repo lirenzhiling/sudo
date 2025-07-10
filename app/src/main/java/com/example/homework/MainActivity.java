@@ -1,7 +1,12 @@
 package com.example.homework;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.TypedValue;
@@ -18,18 +23,21 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.homework.tools.IntArrayWrapper;
+
 public class MainActivity extends AppCompatActivity {
     int[][] easySudoku = {
-            {5, 3, 0, 0, 7, 0, 0, 0, 0},
-            {6, 0, 0, 1, 9, 5, 0, 0, 0},
-            {0, 9, 8, 0, 0, 0, 0, 6, 0},
-            {8, 0, 0, 0, 6, 0, 0, 0, 3},
-            {4, 0, 0, 8, 0, 3, 0, 0, 1},
-            {7, 0, 0, 0, 2, 0, 0, 0, 6},
-            {0, 6, 0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 4, 1, 9, 0, 0, 5},
-            {0, 0, 0, 0, 8, 0, 0, 7, 9}
+            {8, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 3, 6, 0, 0, 0, 0, 0},
+            {0, 7, 0, 0, 9, 0, 2, 0, 0},
+            {0, 5, 0, 0, 0, 7, 0, 0, 0},
+            {0, 0, 0, 0, 4, 5, 7, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0, 3, 0},
+            {0, 0, 1, 0, 0, 0, 0, 6, 8},
+            {0, 0, 8, 5, 0, 0, 0, 1, 0},
+            {0, 9, 0, 0, 0, 0, 4, 0, 0}
     };
+
     int myrow=0;
     int mycol=0;
     int mygrouprow;
@@ -39,9 +47,71 @@ public class MainActivity extends AppCompatActivity {
 
     private long pausedTime = 0; // 记录暂停时的累计时间
 
+//Service的使用
+
+    SudokuService mService;
+    boolean mBound = false;
+    //1.获取Binder
+    private SudokuService.SudokuBinder TimeBinder;
+    //2.获取connection
+    private ServiceConnection connection = new ServiceConnection() {
+
+        //这两个方法会在活动与服务成功绑定以及解除绑定前后调用
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            //向下转型获得mBinder
+            TimeBinder = (SudokuService.SudokuBinder) service;
+            TimeBinder.getTime();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // 绑定服务
+        Intent intent = new Intent(this, SudokuService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        mBound = true;
+        Log.d("tttt", "onStart: ");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //解绑服务
+        unbindService(connection);
+        mBound = false;
+    }
+
+    public void getSumTime() {
+        if (mBound) {
+            int num = TimeBinder.getTime();
+            Toast.makeText(this, "number: " + num, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+//Service的使用
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra("array")) {
+            IntArrayWrapper wrapper = intent.getParcelableExtra("array");
+            if (wrapper != null) {
+                easySudoku = wrapper.getData();
+            } else {
+                Log.e("MainActivity", "Parcelable data is null");
+            }
+        } else {
+            Log.e("MainActivity", "Intent or extra is null");
+            // 处理Intent为null的情况（如初始化默认值或退出Activity）
+        }
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         GridLayout gridLayout = findViewById(R.id.sudoku_grid);
@@ -51,6 +121,11 @@ public class MainActivity extends AppCompatActivity {
         gridLayout.setColumnCount(9);
         gridLayout.setRowCount(9);
         chronometer.start();
+
+        chronometer.setOnClickListener(v->{
+            getSumTime();
+            Log.d("10000", "onStart: ");
+        });
 
         // 动态生成81个格子
         for (int row = 0; row < 9; row++) {
@@ -81,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     cell.setText(String.valueOf(easySudoku[row][col]));
                 }else {
                     // 为0的格子设置点击监听器
-                    cell.setTextColor(0xFF75E478);
+                    cell.setTextColor(0xFFff1b20);
                     cell.setTag(new int[]{row, col}); // 保存位置信息
                     cell.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -162,7 +237,9 @@ public class MainActivity extends AppCompatActivity {
                             chronometer.start();
                         }
                     })
-                    .setPositiveButton("退出", null)
+                    .setPositiveButton("退出", (dialog, which) -> {
+                        finish();
+                    })
                     .show();
         });
 
@@ -197,7 +274,9 @@ public class MainActivity extends AppCompatActivity {
                             chronometer.start();
                         }
                     })
-                    .setPositiveButton("退出", null)
+                    .setPositiveButton("退出", (dialog, which) -> {
+                       finish();
+                    })
                     .show();
         }
     }

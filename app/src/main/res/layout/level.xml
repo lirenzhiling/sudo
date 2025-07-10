@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#e0e0e0">
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="选择关卡"
+        android:textSize="35dp"
+        android:layout_marginTop="100dp"
+        android:gravity="center"/>
+
+    <com.zhouwei.mzbanner.MZBannerView
+        android:id="@+id/Gallery"
+        android:layout_width="match_parent"
+        android:layout_height="360dp"
+        android:layout_gravity="center"
+        app:canLoop="false"
+        android:layout_marginTop="50dp"
+        app:indicatorAlign="center"
+        app:indicatorPaddingLeft="10dp" />
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp">
+
+        <Button
+            android:id="@+id/left"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="上一关"
+            android:layout_weight="1"
+            android:textSize="20dp"/>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"/>
+
+        <Button
+            android:id="@+id/right"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:text="下一关"
+            android:layout_weight="1"
+            android:textSize="20dp"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/play"
+        android:layout_width="320dp"
+        android:layout_height="70dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="开始挑战"
+        android:textSize="25dp"/>
+</LinearLayout>
