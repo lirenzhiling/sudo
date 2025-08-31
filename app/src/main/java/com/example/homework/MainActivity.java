@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SudokuService.class);
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
         mBound = true;
-        Log.d("tttt", "onStart: ");
     }
 
     @Override

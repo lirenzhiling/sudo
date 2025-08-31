@@ -28,5 +28,12 @@ public class HomeActivity  extends AppCompatActivity {
             Intent intent = new Intent(HomeActivity.this, LevelActivity.class);
             startActivity(intent);
         });
+
+        TextView people = findViewById(R.id.people);
+        people.setOnClickListener(v -> {
+            // 创建 Intent 跳转到 SecondActivity
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
     }
 }

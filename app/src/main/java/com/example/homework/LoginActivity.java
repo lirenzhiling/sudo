@@ -1,0 +1,95 @@
+package com.example.homework;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class LoginActivity extends AppCompatActivity {
+
+    private EditText etUsername, etPassword;
+    private CheckBox cbRemember;
+    private Button btnLogin;
+    private SharedPreferences sharedPreferences;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.login);
+
+        TextView people = findViewById(R.id.register);
+        people.setOnClickListener(v -> {
+            // 创建 Intent 跳转到 SecondActivity
+            Intent intent = new Intent(LoginActivity.this,RegisterActivity.class);
+            startActivity(intent);
+        });
+
+        // 初始化视图
+        etUsername = findViewById(R.id.user_username);
+        etPassword = findViewById(R.id.user_password);
+        cbRemember = findViewById(R.id.cb_remember);
+        btnLogin = findViewById(R.id.btn_login);
+
+        // 获取SharedPreferences实例，文件名为"user_info"，模式为私有模式
+        sharedPreferences = getSharedPreferences("user_info", Context.MODE_PRIVATE);
+
+        // 检查是否有保存的凭据
+        String savedUsername = sharedPreferences.getString("username", "");
+        String savedPassword = sharedPreferences.getString("password", "");
+        if (!savedUsername.isEmpty() && !savedPassword.isEmpty()) {
+            etUsername.setText(savedUsername);
+            etPassword.setText(savedPassword);
+            cbRemember.setChecked(true);
+        }
+
+        // 登录按钮点击事件
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String username = etUsername.getText().toString().trim();
+                String password = etPassword.getText().toString().trim();
+
+                if (username.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(LoginActivity.this, "用户名或密码不能为空", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // 模拟登录验证
+                if (login(username, password)) {
+                    // 如果勾选了"记住密码"
+                    if (cbRemember.isChecked()) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("username", username);
+                        editor.putString("password", password);
+                        editor.apply(); // 异步提交
+                    } else {
+                        // 如果不记住，则清除已保存的密码
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.remove("password");
+                        editor.apply();
+                    }
+                    Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_SHORT).show();
+                    // 跳转到主界面...
+                } else {
+                    Toast.makeText(LoginActivity.this, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    // 模拟登录验证
+    private boolean login(String username, String password) {
+        // 这里应该是你的实际登录逻辑，比如与服务器验证
+        return "admin".equals(username) && "123456".equals(password);
+    }
+}
