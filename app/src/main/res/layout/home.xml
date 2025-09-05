@@ -1,8 +1,96 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="#e0e0e0">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="50dp"
+        >
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/iv_avatar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginLeft="10dp"
+        app:cardCornerRadius="35dp"
+        android:elevation="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText"
+        android:background="@drawable/circle_black_border"
+        app:cardBackgroundColor="@android:color/transparent"> <!-- 根据需要设置阴影 -->
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/user"
+        />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/circle_black_border"
+        />
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- 昵称 (约束在头像的右侧) -->
+    <TextView
+        android:id="@+id/tv_nickname"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_alignRight="@id/iv_avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/iv_avatar"
+        app:layout_constraintStart_toEndOf="@id/iv_avatar"
+        app:layout_constraintTop_toTopOf="@id/iv_avatar"
+        app:layout_constraintBottom_toBottomOf="@id/iv_avatar"
+        android:layout_marginEnd="-200dp"
+        android:text="未登录"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:gravity="left"
+        android:paddingRight="10dp"
+        android:paddingLeft="50dp"
+        android:paddingTop="13dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/user_border"/>
+
+        <ImageView
+            android:id="@+id/music"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/music"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginEnd="70dp" />
+
+        <ImageView
+            android:id="@+id/imageView_play"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@mipmap/rank"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toEndOf="@id/music"
+            app:layout_constraintTop_toTopOf="@id/music" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="排行榜"
+            app:layout_constraintTop_toBottomOf="@id/imageView_play"
+            app:layout_constraintStart_toStartOf="@id/imageView_play"
+            app:layout_constraintEnd_toEndOf="@id/imageView_play" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- 标题 -->
     <TextView
@@ -10,39 +98,11 @@
         android:layout_width="320dp"
         android:layout_height="150dp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/home_border"
-        android:layout_marginTop="80dp"
         android:layout_gravity="center"
         android:gravity="center"
         android:paddingBottom="10dp"
         android:text="数独大师"
-        android:textSize="50sp" />
-
-    <TextView
-        android:id="@+id/start"
-        android:layout_width="230dp"
-        android:layout_height="80dp"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/home_border"
-        android:layout_marginTop="80dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:paddingBottom="10dp"
-        android:text="新的游戏"
-        android:textSize="50sp" />
-
-    <TextView
-        android:id="@+id/continueGame"
-        android:layout_width="230dp"
-        android:layout_height="80dp"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/home_border"
-        android:layout_marginTop="30dp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:paddingBottom="10dp"
-        android:text="继续游戏"
-        android:textSize="50sp" />
+        android:textSize="60sp" />
 
     <TextView
         android:id="@+id/choose"
@@ -58,6 +118,32 @@
         android:textSize="50sp" />
 
     <TextView
+        android:id="@+id/start"
+        android:layout_width="230dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/home_border"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:text="随机挑战"
+        android:textSize="50sp" />
+
+    <TextView
+        android:id="@+id/continueGame"
+        android:layout_width="230dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/home_border"
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingBottom="10dp"
+        android:text="双人对战"
+        android:textSize="50sp" />
+
+    <TextView
         android:id="@+id/people"
         android:layout_width="230dp"
         android:layout_height="80dp"
@@ -67,6 +153,6 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:paddingBottom="10dp"
-        android:text="游戏设计"
+        android:text="个人中心"
         android:textSize="50sp" />
 </LinearLayout>

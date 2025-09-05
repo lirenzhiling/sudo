@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
             {0, 0, 8, 5, 0, 0, 0, 1, 0},
             {0, 9, 0, 0, 0, 0, 4, 0, 0}
     };
+    int[][] mySudoku=easySudoku;
 
     int myrow=0;
     int mycol=0;
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
             IntArrayWrapper wrapper = intent.getParcelableExtra("array");
             if (wrapper != null) {
                 easySudoku = wrapper.getData();
+                mySudoku=easySudoku;
             } else {
                 Log.e("MainActivity", "Parcelable data is null");
             }
@@ -205,12 +207,44 @@ public class MainActivity extends AppCompatActivity {
                     View mycell=gridLayout.getChildAt(myrow*9+mycol);
                     if (mycell instanceof TextView) {
                         ((TextView) mycell).setText((String) v.getTag());
-                        Log.d("111", "onClick: "+buttoni);
+                        mySudoku[myrow][mycol]=Integer.parseInt((String)v.getTag());
+//                        Log.d("111", "onClick: "+buttoni);
                     }
                 }
 
             });
         }
+        buttons.getChildAt(9).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                if(isSudokuSolved(mySudoku)){
+                    // 显示对话框
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle("恭喜通关")
+                            .setNegativeButton("确定", (dialog, which) -> {
+                                finish();
+                            })
+                            .setPositiveButton("退出", (dialog, which) -> {
+                                finish();
+                            })
+                            .show();
+                }else {
+                    // 显示对话框
+                    new AlertDialog.Builder(v.getContext())
+                            .setTitle("答案错误")
+                            .setNegativeButton("确定", (dialog, which) -> {
+                                Toast.makeText(v.getContext(), String.valueOf(mySudoku[0][1]), Toast.LENGTH_SHORT).show();
+
+                            })
+                            .setPositiveButton("退出", (dialog, which) -> {
+                                finish();
+                            })
+                            .show();
+                }
+            }
+
+        });
+
 
         //工具栏按钮
         btnControl.setOnClickListener(v -> {
@@ -278,6 +312,72 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .show();
         }
+    }
+
+    public boolean isSudokuSolved(int[][] board) {
+        // 首先检查棋盘是否还有空格（0）
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == 0) {
+                    return false; // 还有空格，肯定未完成
+                }
+            }
+        }
+
+        // 检查所有行是否有重复
+        for (int row = 0; row < 9; row++) {
+            boolean[] seen = new boolean[10]; // 索引1-9对应数字1-9，索引0不用
+            for (int col = 0; col < 9; col++) {
+                int num = board[row][col];
+                if (num < 1 || num > 9) {
+                    return false; // 数字超出有效范围
+                }
+                if (seen[num]) {
+                    return false; // 当前行发现重复数字
+                }
+                seen[num] = true;
+            }
+        }
+
+        // 检查所有列是否有重复
+        for (int col = 0; col < 9; col++) {
+            boolean[] seen = new boolean[10];
+            for (int row = 0; row < 9; row++) {
+                int num = board[row][col];
+                if (num < 1 || num > 9) {
+                    return false;
+                }
+                if (seen[num]) {
+                    return false; // 当前列发现重复数字
+                }
+                seen[num] = true;
+            }
+        }
+
+        // 检查所有3x3宫格是否有重复
+        for (int box = 0; box < 9; box++) {
+            boolean[] seen = new boolean[10];
+            // 计算当前宫格起始行和列
+            int startRow = (box / 3) * 3;
+            int startCol = (box % 3) * 3;
+            for (int rowOffset = 0; rowOffset < 3; rowOffset++) {
+                for (int colOffset = 0; colOffset < 3; colOffset++) {
+                    int actualRow = startRow + rowOffset;
+                    int actualCol = startCol + colOffset;
+                    int num = board[actualRow][actualCol];
+                    if (num < 1 || num > 9) {
+                        return false;
+                    }
+                    if (seen[num]) {
+                        return false; // 当前宫格发现重复数字
+                    }
+                    seen[num] = true;
+                }
+            }
+        }
+
+        // 所有检查都通过，通关成功！
+        return true;
     }
 }
 

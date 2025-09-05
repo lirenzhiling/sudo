@@ -20,6 +20,7 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 mzbannerview = { group = "com.github.pinguo-zhouwei", name = "MZBannerView", version.ref = "mzbannerview" }
+jbcrypt = { group = "org.mindrot", name = "jbcrypt", version = "0.4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

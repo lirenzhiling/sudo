@@ -39,6 +39,10 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.gridlayout)
     implementation(libs.mzbannerview)
+
+    // 添加 jBCrypt 依赖
+    implementation(libs.jbcrypt)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
