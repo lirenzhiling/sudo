@@ -62,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         // 3. 将用户名和哈希密码存入数据库
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+//        mDbHelper.onUpgrade(db,9,10);
         ContentValues values = new ContentValues();
         values.put(UserDbHelper.COLUMN_USERNAME, username);
         values.put(UserDbHelper.COLUMN_PASSWORD, hashedPassword);

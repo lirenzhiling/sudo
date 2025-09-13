@@ -5,6 +5,9 @@
         <item name="windowNoTitle">true</item> <!-- 无标题栏 -->
         <item name="windowActionBar">false</item> <!-- 无 ActionBar -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
     </style>
 
     <style name="Theme.Homework" parent="Base.Theme.Homework" />

@@ -1,9 +1,16 @@
 package com.example.homework;
 
+import static com.example.homework.tools.UserDbHelper.COLUMN_LEVEL;
+import static com.example.homework.tools.UserDbHelper.COLUMN_USERNAME;
+import static com.example.homework.tools.UserDbHelper.TABLE_USERS;
+
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -24,8 +31,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.homework.tools.IntArrayWrapper;
+import com.example.homework.tools.UserDbHelper;
 
 public class MainActivity extends AppCompatActivity {
+    private UserDbHelper dbHelper; // 声明你的数据库帮助类实例
+    private String savedUsername="1";
     int[][] easySudoku = {
             {8, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 3, 6, 0, 0, 0, 0, 0},
@@ -95,6 +105,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public boolean increaseUserLevel(Context context, String username) {
+        SQLiteDatabase db = dbHelper.getWritableDatabaseWithRef(); // 使用新的方法
+        int currentLevel = dbHelper.getUserLevelByUsername(username);
+
+        if (currentLevel == -1) {
+            Log.e("UserDbHelper", "用户不存在: " + username);
+            dbHelper.closeDatabaseWithRef(db); // 使用新的方法关闭
+            return false;
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_LEVEL, currentLevel + 1);
+
+        String whereClause = COLUMN_USERNAME + " = ?";
+        String[] whereArgs = {username};
+
+        try {
+            int rowsAffected = db.update(TABLE_USERS, values, whereClause, whereArgs);
+            dbHelper.closeDatabaseWithRef(db); // 使用新的方法关闭
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            Log.e("UserDbHelper", "更新用户等级时出错: " + e.getMessage());
+            dbHelper.closeDatabaseWithRef(db); // 即使出错也要确保关闭
+            return false;
+        }
+    }
+
 //Service的使用
 
     @Override
@@ -119,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
         GridLayout buttons=findViewById(R.id.button_grid);
         ImageView btnControl = findViewById(R.id.btn_control);
         Chronometer chronometer = findViewById(R.id.chronometer);
+        SharedPreferences sharedPreferences = getSharedPreferences("user_info", Context.MODE_PRIVATE); // "LoginInfo" 是保存登录信息时使用的文件名，请确保与登录时使用的文件名一致
+        savedUsername = sharedPreferences.getString("statususername", ""); // "username" 是存储用户名的键，第二个参数是默认值（当找不到"username"键时返回）
+
         gridLayout.setColumnCount(9);
         gridLayout.setRowCount(9);
         chronometer.start();
@@ -127,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             getSumTime();
             Log.d("10000", "onStart: ");
         });
-
+        dbHelper = new UserDbHelper(this);
         // 动态生成81个格子
         for (int row = 0; row < 9; row++) {
             int grouprow=row/3;
@@ -218,6 +258,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v){
                 if(isSudokuSolved(mySudoku)){
+                    if (!(savedUsername=="")){
+                        boolean updateSuccess = increaseUserLevel(v.getContext(),savedUsername);
+
+                        if (updateSuccess) {
+                            Log.d("Game", "用户 " + savedUsername + " 等级提升成功！");
+                        } else {
+                            Log.e("Game", "用户等级更新失败");
+                        }
+                    }
+
                     // 显示对话框
                     new AlertDialog.Builder(v.getContext())
                             .setTitle("恭喜通关")

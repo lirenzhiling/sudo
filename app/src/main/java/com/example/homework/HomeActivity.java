@@ -42,8 +42,21 @@ public class HomeActivity  extends AppCompatActivity {
 
         TextView people = findViewById(R.id.people);
         people.setOnClickListener(v -> {
+            if (!savedUsername.isEmpty()){
+                // 创建 Intent 跳转到 SecondActivity
+                Intent intent = new Intent(HomeActivity.this, UserActivity.class);
+                startActivity(intent);
+            }else {
+                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+
+        });
+
+        ImageView rank = findViewById(R.id.img_rank);
+        rank.setOnClickListener(v -> {
             // 创建 Intent 跳转到 SecondActivity
-            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            Intent intent = new Intent(HomeActivity.this, RankingActivity.class);
             startActivity(intent);
         });
 
@@ -65,17 +78,12 @@ public class HomeActivity  extends AppCompatActivity {
         });
 
         SharedPreferences sharedPreferences = getSharedPreferences("user_info", Context.MODE_PRIVATE); // "LoginInfo" 是保存登录信息时使用的文件名，请确保与登录时使用的文件名一致
-        savedUsername = sharedPreferences.getString("username", ""); // "username" 是存储用户名的键，第二个参数是默认值（当找不到"username"键时返回）
+        savedUsername = sharedPreferences.getString("statususername", ""); // "username" 是存储用户名的键，第二个参数是默认值（当找不到"username"键时返回）
 
         TextView tvNickname = findViewById(R.id.tv_nickname); // 请确保布局文件中有此ID的TextView
 
         if (!savedUsername.isEmpty()) {
             tvNickname.setText(savedUsername); // 用户名存在，设置TextView的文本
-        } else {
-            // 用户名为空，可以选择设置空字符串、隐藏View或做其他处理
-            // tvNickname.setText(""); // 明确设置为空字符串是可选的，因为初始通常为空
-            // 或者根据需求隐藏TextView: tvNickname.setVisibility(View.GONE);
-            Toast.makeText(HomeActivity.this, "没名字", Toast.LENGTH_SHORT).show();
         }
         tvNickname.setOnClickListener(v -> {
             if (!savedUsername.isEmpty()) {
@@ -84,9 +92,9 @@ public class HomeActivity  extends AppCompatActivity {
                         .setTitle("要退出登录吗？")
                         .setNegativeButton("确定", (dialog, which) -> {
                             SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.remove("username");
-                            editor.remove("password");
+                            editor.remove("statususername");
                             savedUsername="";
+                            editor.apply();
                             tvNickname.setText("未登录");
                         })
                         .setPositiveButton("取消", (dialog, which) -> {
@@ -98,8 +106,6 @@ public class HomeActivity  extends AppCompatActivity {
                 Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
-
-
         });
 
 

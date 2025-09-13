@@ -53,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         // 检查是否有保存的凭据
         String savedUsername = sharedPreferences.getString("username", "");
         String savedPassword = sharedPreferences.getString("password", "");
+        String statusUsername = sharedPreferences.getString("statususername", "");
         if (!savedUsername.isEmpty() && !savedPassword.isEmpty()) {
             etUsername.setText(savedUsername);
             etPassword.setText(savedPassword);
@@ -77,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (cbRemember.isChecked()) {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("username", username);
+                        editor.putString("statususername", username);
                         editor.putString("password", password);
                         editor.apply(); // 异步提交
                     } else {
